@@ -1,5 +1,5 @@
 <template>
-    <section class="container">
+    <section class="container" @click="click">
         <div>
             <app-logo/>
             <h1 class="title">
@@ -17,8 +17,17 @@
     import AppLogo from '~/components/AppLogo.vue'
 
     export default {
-        components: {
-            AppLogo
+        components: {AppLogo},
+        data: ()=> ({
+
+        }),
+        methods: {
+            click: function(){
+                console.log(this.$route);
+            }
+        },
+        computed: {
+
         }
     }
 </script>

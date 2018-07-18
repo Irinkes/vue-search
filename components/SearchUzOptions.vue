@@ -1,15 +1,10 @@
 <script>
     export default {
         name: 'search-uz-options',
+        props: {
+            uzOptions: Object,
+        },
         data: ()=> ({
-            uzOptions: [
-                'вузы',
-                'колледжи',
-                'подготовительные курсы',
-                'второе высшее',
-                'магистратура',
-                'аспирантура'
-            ],
             showOptionList: false,
             optionLabel: "Вид образования",
             selectedOption: null
@@ -19,12 +14,13 @@
                 this.selectedOption = option;
                 this.optionLabel = option;
                 this.showOption = !this.showOption;
+                this.$emit('receiveOption', option);
 
             }
         },
         computed: {
             displayedOptions:  function() {
-                return this.selectedOption ? this.uzOptions.filter(option=>option!==this.selectedOption) : this.uzOptions;
+                return this.selectedOption ? Object.keys(this.uzOptions).filter(option=>option!==this.selectedOption) : Object.keys(this.uzOptions);
             }
         }
     }
@@ -58,7 +54,6 @@
 
         .option-label {
             margin-right: 20px;
-            line-height: 42px;
             height: 42px;
             cursor: pointer;
         }

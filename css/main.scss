@@ -7,3 +7,19 @@ body {
   min-width: 320px;
 }
 a {   cursor: pointer; }
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.btn {
+  background: #ccc;
+  color: #000;
+  border: 1px solid #eee;
+  display: block;
+  text-decoration: none;
+}
