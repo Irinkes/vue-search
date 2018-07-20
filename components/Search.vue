@@ -46,7 +46,10 @@
                 'юриспруденция': '/jurisprudence/',
                 'филология': '/filologiya/',
             },
-            submitUrl: '',
+            submitUrlParts:{
+                uzOption: '',
+                specOption: '',
+            },
             searchMessage:''
         }),
         methods: {
@@ -55,7 +58,7 @@
             },
             addUzOptionToUrl: function(option)
             {
-                this.submitUrl = this.uzOptions[option];
+                this.submitUrlParts.uzOption = this.uzOptions[option];
             },
             addSearchMessageToUrl: function() {
                 /*массив из ключей specOptions*/
@@ -68,24 +71,19 @@
                     }
                 }
 
-                if (this.submitUrl.length > 0) {
+
 
                     if(chosenSearchOptionUrl) {
-                        this.submitUrl = this.submitUrl + chosenSearchOptionUrl;
-                    } else {
-                        this.submitUrl = this.submitUrl + '/' + this.searchMessage;
+                        this.submitUrlParts.specOption = chosenSearchOptionUrl;
                     }
+                    this.submitUrlParts.specOption = '/search/' + this.searchMessage;
 
-                } else {
-                    if(chosenSearchOptionUrl) {
-                        this.submitUrl = '/search' + chosenSearchOptionUrl;
-                    }
-                    this.submitUrl = '/search/' + this.searchMessage;
-                }
             }
         },
         computed: {
-
+            submitUrl: function() {
+                return this.submitUrlParts.uzOption + this.submitUrlParts.specOption;
+            }
         },
     }
 </script>
