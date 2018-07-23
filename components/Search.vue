@@ -46,43 +46,74 @@
                 'юриспруденция': '/jurisprudence/',
                 'филология': '/filologiya/',
             },
+            attendanceOptions: {
+                'очная': '/ochno/',
+                'очно-заочная': '/ochno-zaochno/',
+                'заочная': '/zaochno/',
+                'дистанционная': '/distancionno/',
+            },
             submitUrlParts:{
-                uzOption: '',
-                specOption: '',
+                uzOptions: '',
+                specOptions: '',
+                searchKey: '',
             },
             searchMessage:''
         }),
         methods: {
             click: function(){
-                console.log(this.$route);
+                // console.log(this.$route);
             },
             addUzOptionToUrl: function(option)
             {
-                this.submitUrlParts.uzOption = this.uzOptions[option];
+                this.submitUrlParts.uzOptions = this.uzOptions[option];
             },
             addSearchMessageToUrl: function() {
                 /*массив из ключей specOptions*/
-                let specLabels = Object.keys(this.specOptions);
-                let chosenSearchOptionUrl;
+                let searchParams = this.allOptionsKeys;
+                console.log('searchParams', searchParams);
+
+                let chosenSearchOptionUrl, //часть урла, которая будет сформирована после обработки сообщения из поисковой строки
+                    optionSection; //раздел справочника, к которому относится введенное сообщение из поисковой строки
 
                 if(this.searchMessage.length>0) {
-                    if(specLabels.includes(this.searchMessage)){
-                        chosenSearchOptionUrl =this.specOptions[this.searchMessage];
+                    if(Object.keys(searchParams).includes(this.searchMessage)){
+                        /*если введенный в поиск запрос найден в справочнике*/
+                        optionSection = searchParams[this.searchMessage];
+                        let section = this[optionSection];
+                        chosenSearchOptionUrl = section[this.searchMessage];
                     }
                 }
 
+                /*Если введенный в поиск запрос найден в справочнике */
+
+                if(chosenSearchOptionUrl) {
+                    this.submitUrlParts[optionSection] = chosenSearchOptionUrl;
+                }
+                /*если введенный в поиск запрос НЕ найден в справочнике */
+                else {
+                    this.submitUrlParts[optionSection] = '/' + this.searchMessage;
+                }
 
 
-                    if(chosenSearchOptionUrl) {
-                        this.submitUrlParts.specOption = chosenSearchOptionUrl;
-                    }
-                    this.submitUrlParts.specOption = '/search/' + this.searchMessage;
+                if(!this.submitUrlParts.uzOptions) {
+                    this.submitUrlParts.searchKey = 'search';
+                }
 
             }
         },
         computed: {
+            allOptionsKeys: function(){
+                let optionsKeys = {};
+                for(let key in this.specOptions) {
+                    optionsKeys[key] = 'specOptions';
+                }
+                for(let key in this.attendanceOptions) {
+                    optionsKeys[key] = 'attendanceOptions';
+                }
+                return optionsKeys;
+            },
             submitUrl: function() {
-                return this.submitUrlParts.uzOption + this.submitUrlParts.specOption;
+                return this.submitUrlParts.uzOptions + this.submitUrlParts.searchKey + this.submitUrlParts.specOptions;
             }
         },
     }
