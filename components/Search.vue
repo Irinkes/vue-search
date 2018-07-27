@@ -7,20 +7,17 @@
         <div style="padding-top:10px; margin-bottom: 10px;">
             <span v-if="selected">You have selected '{{JSON.stringify(selected,null,2)}}'</span>
         </div>
-        <!--<input type="text" @input="onInputChange" placeholder='Do youDo you'/>-->
+
         <vue-autosuggest
                 :suggestions="filteredOptions"
                 @focus="focusMe"
                 @click="clickHandler"
                 :on-selected="onSelected"
-                :render-suggestion="renderSuggestion"
-                :get-suggestion-value="getSuggestionValue"
                 :input-props="{id:'autosuggest__input',
                                onInputChange: this.onInputChange,
                                placeholder:'Do you feel lucky, punk?'}"
         />
 
-        <div class="" if="filteredOption">{{JSON.stringify(filteredOptions,null,2)}}</div>
 
 
     </div>
@@ -45,6 +42,74 @@
         cursor: pointer;
         display: inline-block !important;
     }
+    #autosuggest__input {
+        outline: none;
+        position: relative;
+        display: block;
+        font-family: monospace;
+        font-size: 20px;
+        border: 1px solid #616161;
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+    }
+    #autosuggest__input.autosuggest__input-open {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .autosuggest__results-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .autosuggest__results {
+        font-weight: 300;
+        margin: 0;
+        position: absolute;
+        z-index: 10000001;
+        width: 100%;
+        border: 1px solid #e0e0e0;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        background: white;
+        padding: 0px;
+        overflow: scroll;
+        max-height: 200px;
+    }
+
+    .autosuggest__results ul {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+
+    .autosuggest__results .autosuggest__results_item {
+        cursor: pointer;
+        padding: 15px;
+    }
+
+    #autosuggest ul:nth-child(1) > .autosuggest__results_title {
+        border-top: none;
+    }
+
+    .autosuggest__results .autosuggest__results_title {
+        color: gray;
+        font-size: 11px;
+        margin-left: 0;
+        padding: 15px 13px 5px;
+        border-top: 1px solid lightgray;
+    }
+
+    .autosuggest__results .autosuggest__results_item:active,
+    .autosuggest__results .autosuggest__results_item:hover,
+    .autosuggest__results .autosuggest__results_item:focus,
+    .autosuggest__results .autosuggest__results_item.autosuggest__results_item-highlighted {
+        background-color: #ddd;
+    }
+
 </style>
 <script>
     import SearchUzOptions from "./SearchUzOptions";
@@ -64,7 +129,7 @@
         data: ()=> ({
             selected: "",
             filteredOptions: [],
-            suggestions: [
+            options: [
                 {
                     data: null,
                 }
@@ -101,7 +166,7 @@
             axios
                 // .get('http://www.json-generator.com/api/json/get/cfFzpwovGW?indent=2')
                 .get('http://www.json-generator.com/api/json/get/cgviNzYZWq?indent=2')
-                .then(response => (this.suggestions[0].data = response));
+                .then(response => (this.options[0].data = response));
         },
 
         methods: {
@@ -115,18 +180,18 @@
             clickHandler(item){
                 // console.log('item', item);
             },
-            renderSuggestion() {
-                console.log('suggestion', this.filteredOptions);
-
-                // const character = suggestion.item;
-                return (
-                    '<div style={{ color: "red" }}>{suggestion}</div>;'
-                    );
-            },
-            getSuggestionValue() {
-                console.log('suggestion111', this.filteredOptions);
-                // return suggestion.item.name;
-            },
+            // renderSuggestion() {
+            //     console.log('suggestion', this.filteredOptions);
+            //
+            //     // const character = suggestion.item;
+            //     return (
+            //         '<div style={{ color: "red" }}>{suggestion}</div>;'
+            //         );
+            // },
+            // getSuggestionValue() {
+            //     console.log('suggestion111', this.filteredOptions);
+            //     // return suggestion.item.name;
+            // },
             focusMe(e) {
                 // console.log('suggestions', this.suggestions);
             },
@@ -171,7 +236,7 @@
             },
             onInputChange(text, oldText) {
 
-                let jsonData = this.suggestions[0].data.data[0];
+                let jsonData = this.options[0].data.data[0];
                 console.log('jsonData', jsonData);
 
 
@@ -195,9 +260,18 @@
                     return item.length>0;
                 });
 
-                console.log('filteredJsonData', filteredJsonData);
 
-                this.filteredOptions = filteredJsonData;
+                for(let i = 0; i < filteredJsonData.length; i++) {
+                    filteredJsonData = filteredJsonData[0].concat(filteredJsonData[1]);
+                }
+                console.log(filteredJsonData);
+
+                // filteredJsonData = filteredJsonData[0].concat(filteredJsonData[1], filteredJsonData[2]);
+                // console.log('filteredJsonData', filteredJsonData);
+                //
+                // this.filteredOptions = [{
+                //     data: filteredJsonData
+                // }];
 
 
 
