@@ -5,7 +5,7 @@
         <router-link :to="{path: submitUrl}" class="btn search-submit">Найти</router-link>
 
         <div style="padding-top:10px; margin-bottom: 10px;">
-            <span v-if="selected">You have selected '{{JSON.stringify(selected,null,2)}}'</span>
+            <span v-if="selected">You have selected '{{selected}}'</span>
         </div>
 
         <vue-autosuggest
@@ -175,7 +175,7 @@
                 // console.log('this.info', this.info);
             },
             onSelected(item) {
-                this.selected = item;
+                this.selected = item.item;
             },
             clickHandler(item){
                 // console.log('item', item);
@@ -237,8 +237,6 @@
             onInputChange(text, oldText) {
 
                 let jsonData = this.options[0].data.data[0];
-                console.log('jsonData', jsonData);
-
 
                 if (text === null) {
                     /* Maybe the text is null but you wanna do
@@ -260,11 +258,17 @@
                     return item.length>0;
                 });
 
-
                 for(let i = 0; i < filteredJsonData.length; i++) {
-                    filteredJsonData = filteredJsonData[0].concat(filteredJsonData[1]);
+                    filteredJsonData = [].concat(...filteredJsonData);
                 }
-                console.log(filteredJsonData);
+                console.log('filteredJsonData length > 1', filteredJsonData);
+                this.filteredOptions = [{
+                    data: filteredJsonData
+                }];
+
+
+
+                console.log('data', this.filteredOptions);
 
                 // filteredJsonData = filteredJsonData[0].concat(filteredJsonData[1], filteredJsonData[2]);
                 // console.log('filteredJsonData', filteredJsonData);
