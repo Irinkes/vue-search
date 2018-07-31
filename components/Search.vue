@@ -15,7 +15,7 @@
                 :on-selected="onSelected"
                 :input-props="{id:'autosuggest__input',
                                onInputChange: this.onInputChange,
-                               placeholder:'Do you feel lucky, punk?'}"
+                               placeholder:'search'}"
         />
 
 
@@ -158,15 +158,14 @@
             submitUrlParts:{
                 uzOptions: '',
                 specOptions: '',
-                searchKey: '',
+                searchKey: 'search',
             },
             searchMessage:''
         }),
         mounted() {
             axios
-                // .get('http://www.json-generator.com/api/json/get/cfFzpwovGW?indent=2')
                 .get('http://www.json-generator.com/api/json/get/cgviNzYZWq?indent=2')
-                .then(response => (this.options[0].data = response));
+                .then(response => (this.options[0].data = response.data));
         },
 
         methods: {
@@ -176,6 +175,13 @@
             },
             onSelected(item) {
                 this.selected = item.item;
+                let jsonData = this.options[0].data[0];
+
+                for(let dataObj in jsonData) {
+                    if(Object.keys(jsonData[dataObj]).includes(item.item)) {
+                        this.submitUrlParts[dataObj] = jsonData[dataObj][item.item];
+                    }
+                }
             },
             clickHandler(item){
                 // console.log('item', item);
@@ -198,8 +204,8 @@
 
             addUzOptionToUrl: function(option)
             {
-
                 this.submitUrlParts.uzOptions = this.uzOptions[option];
+                this.submitUrlParts.searchKey = '';
             },
             addSearchMessageToUrl: function() {
                 /*массив из ключей specOptions*/
@@ -236,7 +242,7 @@
             },
             onInputChange(text, oldText) {
 
-                let jsonData = this.options[0].data.data[0];
+                let jsonData = this.options[0].data[0];
 
                 if (text === null) {
                     /* Maybe the text is null but you wanna do
@@ -254,19 +260,24 @@
                         })
                     )
                 }
+                // console.log('filteredJsonData', filteredJsonData);
+
                 filteredJsonData = filteredJsonData.filter(item => {
                     return item.length>0;
                 });
 
+                if(filteredJsonData.length===0 || ) {
+                    console.log('fdfsf');
+                }
+
+
                 for(let i = 0; i < filteredJsonData.length; i++) {
                     filteredJsonData = [].concat(...filteredJsonData);
                 }
-                console.log('filteredJsonData length > 1', filteredJsonData);
+
                 this.filteredOptions = [{
                     data: filteredJsonData
                 }];
-
-
 
                 console.log('data', this.filteredOptions);
 
@@ -283,6 +294,7 @@
                 // this.filteredOptions = this.filteredOptions.push(data[0]);
             },
         },
+
         computed: {
             allOptionsKeys: function(){
                 let optionsKeys = {};
